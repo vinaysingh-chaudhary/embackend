@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import bcrypt, { hash } from 'bcrypt'
-import jwt from 'jsonwebtoken'
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const employeeSchema = new mongoose.Schema({
   firstName: {
@@ -26,7 +26,7 @@ const employeeSchema = new mongoose.Schema({
     required: true,
     tolowercase: true,
     trim: true,
-    index: true
+    index: true,
   },
   mobile: {
     type: Number,
@@ -38,7 +38,7 @@ const employeeSchema = new mongoose.Schema({
     match: [/^\S+@\S+\.\S+$/, 'Please fill a valid email address'],
     required: true,
     tolowercase: true,
-    index: true
+    index: true,
   },
   password: {
     type: String,
@@ -61,50 +61,47 @@ const employeeSchema = new mongoose.Schema({
     default: Date.now,
   },
   refreshToken: {
-    type: String
-  }
-}, {timestamps: true});
+    type: String,
+  },
+}, { timestamps: true });
 
+employeeSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
 
-employeeSchema.pre("save", async function(next){
-    if(!this.isModified("password")) return next(); 
+  const hashedPassword = await bcrypt.hash(this.password, 12);
+  this.password = hashedPassword;
+  next();
+});
 
-    const hashedPassword = await bcrypt.hash(this.password, 12); 
-    this.password = hashedPassword; 
-    next(); 
-})
+employeeSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
 
-
-employeeSchema.methods.isPasswordCorrect = async function(password){
-    return await bcrypt.compare(password, this.password)
-}
-
-
-employeeSchema.methods.generateAccessToken = function(){
-    return jwt.sign({
-        _id: this._id,
-        email: this.email
-    }, 
-    process.env.ACCESS_TOKEN_SECRET, 
+employeeSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
     {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY
-    })
-}
-
-
-
-employeeSchema.methods.generateRefreshToken = function(){
-    return jwt.sign({
-        _id: this._id,
-        email: this.email
-    }, 
-    process.env.REFRESH_TOKEN_SECRET, 
+      _id: this._id,
+      email: this.email,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
     {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRY
-    }) 
-}
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    }
+  );
+};
 
-
+employeeSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+    }
+  );
+};
 
 const Employee = mongoose.model('Employee', employeeSchema);
-export default Employee; 
+module.exports = Employee;

@@ -1,8 +1,8 @@
 const asyncHandler = (handler) => {
-     return  (req, res, next) => {
+    return (req, res, next) => {
         Promise.resolve(handler(req, res, next))
-        .catch((error) => next(error)); 
+            .catch((error) => next(error));
     }
 }
 
-export default asyncHandler; 
+module.exports = asyncHandler;

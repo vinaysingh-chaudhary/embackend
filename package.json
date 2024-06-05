@@ -2,11 +2,11 @@
   "name": "embackend",
   "version": "1.0.0",
   "description": "node backend for employee management system. ",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon  -r dotenv/config --experimental-json-modules src/index.js",
+    "dev": "nodemon src/index.js",
     "build": "echo 'No build step required'"
   },
   "keywords": [
