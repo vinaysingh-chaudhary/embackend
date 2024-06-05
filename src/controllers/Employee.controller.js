@@ -23,7 +23,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 const registerEmployee = asyncHandler(async (req, res) => {
     const { firstName, middleName, lastName, username, mobile, email, introBio, role, joinedOn, password } = req.body;
 
-    if ([firstName, lastName, username, mobile, email, introBio, role, joinedOn, password].some((field) => field?.trim() === '')) {
+    if ([firstName, lastName, username, mobile, email, introBio, role, password].some((field) => field?.trim === '')) {
         throw new ApiError(400, 'All credentials are required');
     }
 
