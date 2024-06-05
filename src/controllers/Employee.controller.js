@@ -2,7 +2,6 @@ const asyncHandler = require('../utilities/asyncHandler.js');
 const Employee = require('../models/Employee.model.js');
 const ApiResponse = require('../utilities/ApiResponse.js');
 const ApiError = require('../utilities/ApiError.js');
-const { cookieOptions } = require('../constant.js');
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -83,8 +82,17 @@ const logInEmployee = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-        .cookie('refreshToken', refreshToken, cookieOptions)
-        .cookie('accessToken', accessToken, cookieOptions)
+        .cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: true, 
+            sameSite: 'None'
+            })
+            
+        .cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: true, 
+            sameSite: 'None'
+            })
         .json(new ApiResponse(200, { employee: loggedInEmployee, accessToken, refreshToken }, 'User logged in successfully'));
 });
 
@@ -98,8 +106,16 @@ const logout = asyncHandler(async (req, res) => {
     }, { new: true });
 
     return res.status(200)
-        .clearCookie('refreshToken', cookieOptions)
-        .clearCookie('accessToken', cookieOptions)
+        .clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: true, 
+            sameSite: 'None'
+            })
+        .clearCookie('accessToken', {
+            httpOnly: true,
+            secure: true, 
+            sameSite: 'None'
+            })
         .json(new ApiResponse(200, {}, 'Employee logged out successfully'));
 });
 
