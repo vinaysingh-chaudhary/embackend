@@ -4,10 +4,10 @@
   "description": "node backend for employee management system. ",
   "type": "commonjs",
   "main": "index.js",
-  "scripts": {
+  "scripts": { 
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "build": "echo 'No build step required'"
+    "build": "echo 'Running build step...'"
   },
   "keywords": [
     "Nodejs",

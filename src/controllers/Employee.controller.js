@@ -3,7 +3,6 @@ const Employee = require('../models/Employee.model.js');
 const ApiResponse = require('../utilities/ApiResponse.js');
 const ApiError = require('../utilities/ApiError.js');
 const { cookieOptions } = require('../constant.js');
-const jwt = require('jsonwebtoken');
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
