@@ -1,6 +1,7 @@
 const cookieOptions = {
-    httpOnly: true,
-    sameSite: 'None'
+  httpOnly: true,
+  secure: true, 
+  sameSite: 'Lax'
   };
 
   module.exports = cookieOptions; 
