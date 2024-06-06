@@ -222,7 +222,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
 
 
 const deleteEmployeeAccount = asyncHandler(async (req, res) => {
-    const { employeeId } = req.body;
+    const { employeeId } = req.query;
 
     if (!employeeId) {
         throw new ApiError(400, 'Please provide employeeId');
