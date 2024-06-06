@@ -54,8 +54,12 @@ const registerEmployee = asyncHandler(async (req, res) => {
         throw new ApiError(500, 'Failed to register employee');
     }
 
-    return res.status(201).json(new ApiResponse(200, registeredEmployee, 'Employee registered successfully'));
+    return res.status(200).json(new ApiResponse(200, registeredEmployee, 'Employee registered successfully'));
 });
+
+
+
+
 
 const logInEmployee = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -96,6 +100,10 @@ const logInEmployee = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, { employee: loggedInEmployee, accessToken, refreshToken }, 'User logged in successfully'));
 });
 
+
+
+
+
 const logout = asyncHandler(async (req, res) => {
     const _id = req.employee._id;
 
@@ -119,6 +127,10 @@ const logout = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, {}, 'Employee logged out successfully'));
 });
 
+
+
+
+
 const getEmployee = asyncHandler(async (req, res) => {
     const _id = req.employee._id;
 
@@ -134,6 +146,30 @@ const getEmployee = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, employee, 'Employee details fetched successfully'));
 });
+
+
+const getEmployees = asyncHandler(async(req, res) => {
+    const _id = req.employee._id;
+ 
+    if (!_id) {
+        throw new ApiError(400, 'Unauthorised User');
+    }
+
+    const isAdmin = await Employee.findById(_id).select("-password -refreshToken"); 
+    if(isAdmin.isAdmin !== true){
+        throw new ApiError(500, "Employee have no access to this endpoint"); 
+    }
+
+    const employees = await Employee.find({}); 
+    if(!employees){
+        throw new ApiError(500, "Failed to fetch employees"); 
+    }
+
+    return res.status(200).json(new ApiResponse(200, employees, "Employees fetched successfully")); 
+})
+
+
+
 
 const updateDetails = asyncHandler(async (req, res) => {
     const { firstName, middleName, lastName, mobile, introBio, role } = req.body;
@@ -164,6 +200,8 @@ const updateDetails = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, { updatedEmployee }, 'User updated successfully'));
 });
 
+
+
 const deleteAccount = asyncHandler(async (req, res) => {
     const _id = req.employee._id;
 
@@ -179,6 +217,9 @@ const deleteAccount = asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(200, {}, 'Employee deleted successfully'));
 });
+
+
+
 
 const deleteEmployeeAccount = asyncHandler(async (req, res) => {
     const { employeeId } = req.body;
@@ -196,6 +237,8 @@ const deleteEmployeeAccount = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, {}, 'Employee deleted successfully'));
 });
 
+
+
 module.exports = {
     registerEmployee,
     logInEmployee,
@@ -204,4 +247,5 @@ module.exports = {
     updateDetails,
     deleteAccount,
     deleteEmployeeAccount,
+    getEmployees
 };
